@@ -18,6 +18,10 @@ pcscore = 0;
 
 audio1 = '';
 
+PussoX = 0;
+PussoY = 0;
+PussoScore = 0;
+
 
 //Coordenadas x, y, raio, velocidade em x e velocidade em y
 ball = {
@@ -36,6 +40,7 @@ function setup(){
   video.hide();
 
   poseNet = ml5.poseNet(video, modelLoaded);
+  poseNet.on('pose', gotPoses);
 }
 
 
@@ -79,6 +84,13 @@ function draw(){
 
   //Chamar a função move() (muito importante para o jogo)
   move();
+
+  if(PussoScore > 0.2)
+  {
+    fill("#323232");
+    stroke("#343434");
+    circle(PussoX, PussoY, PussoScore);
+  }
 }
 
 
@@ -182,4 +194,16 @@ function paddleInCanvas(){
 function modelLoaded()
 {
   console.log('Modelo Carregado!');
+}
+
+
+function gotPoses(results)
+{
+  if(results > 0)
+  {
+    PussoX = results[0].pose.rightWrist.x;
+    PussoY = results[0].pose.rightWrist.y;
+    PussoScore = results[0].pose.keypoint[10].score;
+    console.log(results);
+  }
 }
